@@ -1,0 +1,19 @@
+from rest_framework import serializers
+from .models import AssetItem
+from asset.serializers import AssetSerializer
+from location.serializers import LocationSerializer
+
+class AssetItemSerializer(serializers.ModelSerializer):
+    asset_details = AssetSerializer(source='asset', read_only=True)
+    asset_name = serializers.CharField(source='asset.name', read_only=True)
+    location_name = serializers.CharField(source='location.name', read_only=True)
+
+    class Meta:
+        model = AssetItem
+        fields = [
+            'asset', 'serial_number', 'purchase_date', 'warranty_expiry_date',
+            'price', 'status', 'asset_details', 'location', 'asset_name', 'location_name'
+        ]
+
+    def get_location_name(self, obj):
+        return obj.location.name if obj.location else None

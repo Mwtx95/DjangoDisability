@@ -1,0 +1,14 @@
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from .views import VendorViewSet
+
+router = DefaultRouter()
+
+router.register(r'', VendorViewSet)
+
+app_name = 'vendors'
+
+urlpatterns = [
+    path('', include(router.urls)),
+]
