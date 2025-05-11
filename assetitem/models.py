@@ -10,11 +10,12 @@ class Status(models.TextChoices):
     AVAILABLE = 'AVAILABLE', 'Available'
     MAINTENANCE = 'MAINTENANCE', 'Maintenance'
     BROKEN = 'BROKEN', 'Broken'
+    NOT_AVAILABLE = 'NOT AVAILABLE', 'Not Available'
     ASSIGNED = 'ASSIGNED', 'Assigned'
 
 class AssetItem(models.Model):
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="items")
-    serial_number = models.CharField(max_length=255, unique=True)
+    serial_number = models.CharField(max_length=50, unique=False, blank=True, null=True)
     purchase_date = models.DateField(null=True, blank=True)
     warranty_expiry_date = models.DateField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)

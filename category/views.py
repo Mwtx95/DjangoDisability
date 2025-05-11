@@ -30,7 +30,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):
-        categories = Category.objects.all()
+        # Only get non-blocked categories
+        categories = Category.objects.filter(is_blocked=False)
         result = []
 
         for category in categories:
@@ -50,7 +51,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
                 'name': category.name,
                 'totalAssets': total_assets,
                 'description': category.description or '',
-                'isBlocked': category.is_blocked,
+                'is_blocked': category.is_blocked,
                 'availableCount': available_count,
                 'maintenanceCount': maintenance_count,
                 'brokenCount': broken_count,
@@ -58,3 +59,19 @@ class CategoryViewSet(viewsets.ModelViewSet):
             })
 
         return Response(result)
+
+    @action(detail=True, methods=['patch'], url_path='toggle-block')
+    def toggle_block(self, request, pk=None):
+        """
+        Toggle or set the is_blocked field of a Category
+        """
+        category = self.get_object()
+
+        # Get the new status from the request data, or toggle the current status
+        is_blocked = request.data.get('is_blocked', not category.is_blocked)
+
+        category.is_blocked = is_blocked
+        category.save()
+
+        serializer = self.get_serializer(category)
+        return Response(serializer.data)
