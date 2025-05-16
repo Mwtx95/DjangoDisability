@@ -91,8 +91,8 @@ DATABASES = {
         'NAME': 'DjangoDisability_db',
         'USER': 'root',
         'PASSWORD': '2204',
-        'HOST': 'localhost', # Set to 'localhost' if the database is on the same machine
-        'PORT': '3306',  # Default is '3306'
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
