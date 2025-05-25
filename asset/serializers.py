@@ -12,4 +12,4 @@ class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asset
         fields = ('id', 'name', 'description', 'quantity', 'category', 'category_name',
-                  'location', 'location_name', 'price', 'vendor', 'vendor_name', 'status','purchase_date','warranty_date',)
+                  'location', 'location_name', 'price', 'vendor', 'vendor_name', 'purchase_date', 'warranty_date')

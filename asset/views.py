@@ -1,12 +1,13 @@
+import time
+
+from django.db import transaction
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db import transaction
+from assetitem.models import Status
+from assetitem.serializers import AssetItemSerializer
 from .models import Asset
 from .serializers import AssetSerializer
-from assetitem.models import AssetItem
-from assetitem.serializers import AssetItemSerializer
-import time
 
 
 class AssetViewSet(viewsets.ModelViewSet):
@@ -39,16 +40,16 @@ class AssetViewSet(viewsets.ModelViewSet):
                 serial_number = f"{serial_prefix}-{current_timestamp}-{i+1}"
             else:
                 serial_number = request.data.get('serial_number', f"TEMP-{asset.id}-{i+1}")
-                
+
             asset_item_data = {
-                'asset': asset.id,
-                'price': request.data.get('price', 0),
-                'vendor': request.data.get('vendor'),
-                'status': request.data.get('status'),
-                'location': request.data.get('location'),
-                'purchase_date': request.data.get('purchase_date'),
-                'warranty_expiry_date': request.data.get('warranty_expiry_date'),
-                'serial_number': serial_number
+            'asset': asset.id,
+            'price': request.data.get('price', 0),
+            'vendor': request.data.get('vendor'),
+            'status': request.data.get('status', Status.AVAILABLE),
+            'location': request.data.get('location'),
+            'purchase_date': request.data.get('purchase_date'),
+            'warranty_expiry_date': request.data.get('warranty_expiry_date'),
+            'serial_number': serial_number
             }
 
             asset_items.append(asset_item_data)

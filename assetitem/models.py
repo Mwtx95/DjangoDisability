@@ -18,7 +18,7 @@ class AssetItem(models.Model):
     serial_number = models.CharField(max_length=50, unique=False, blank=True, null=True)
     purchase_date = models.DateField(null=True, blank=True)
     warranty_expiry_date = models.DateField(null=True, blank=True)
-    notes = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     price = models.FloatField(default=0)
     vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.SET_NULL)
     status = models.CharField(
