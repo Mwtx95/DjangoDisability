@@ -13,7 +13,8 @@ class AssetItemSerializer(serializers.ModelSerializer):
         model = AssetItem
         fields = [
             'asset', 'serial_number', 'purchase_date', 'warranty_expiry_date',
-            'price', 'status', 'asset_details', 'location', 'asset_name', 'location_name', 'vendor', 'vendor_name'
+            'description', 'price', 'status', 'asset_details', 'location', 'asset_name', 
+            'location_name', 'vendor', 'vendor_name', 'created_at', 'updated_at'
         ]
 
     def get_location_name(self, obj):
