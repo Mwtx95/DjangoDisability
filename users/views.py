@@ -73,7 +73,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], permission_classes=[IsSuperAdmin])
     def deactivate(self, request, pk=None):
         user = self.get_object()
         user.soft_delete()
@@ -88,7 +88,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({"status": "user deactivated"})
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], permission_classes=[IsSuperAdmin])
     def reactivate(self, request, pk=None):
         user = self.get_object()
         user.reactivate()
@@ -103,7 +103,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({"status": "user reactivated"})
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'], permission_classes=[IsSuperAdmin])
     def activities(self, request, pk=None):
         user = self.get_object()
         activities = UserActivity.objects.filter(user=user)
@@ -119,6 +119,18 @@ class UserRoleViewSet(viewsets.ModelViewSet):
     queryset = UserRole.objects.all()
     serializer_class = UserRoleSerializer
     permission_classes = [IsSuperAdmin]
+
+class UserActivityViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for UserActivity (logs) - Only accessible by Super Admins
+    """
+    queryset = UserActivity.objects.all()
+    serializer_class = UserActivitySerializer
+    permission_classes = [IsSuperAdmin]
+    
+    def get_queryset(self):
+        """Super admins can see all user activities"""
+        return UserActivity.objects.all().order_by('-action_time')
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):

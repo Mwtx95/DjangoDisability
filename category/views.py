@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -7,6 +7,7 @@ from asset.models import Asset
 from assetitem.models import AssetItem
 from .models import Category
 from .serializers import CategorySerializer
+from users.views import IsSuperAdmin
 
 
 # Create your views here.
@@ -14,6 +15,17 @@ from .serializers import CategorySerializer
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    
+    def get_permissions(self):
+        """
+        Super admins can perform all operations
+        Branch admins can only read (list, retrieve) and view stats
+        """
+        if self.action in ['list', 'retrieve', 'stats']:
+            permission_classes = [permissions.IsAuthenticated]
+        else:  # create, update, partial_update, destroy, toggle_block
+            permission_classes = [IsSuperAdmin]
+        return [permission() for permission in permission_classes]
 
     def create(self, request, *args, **kwargs):
         if isinstance(request.data, list):  # Check if it's a list
