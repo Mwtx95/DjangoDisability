@@ -1,18 +1,48 @@
 import time
 
 from django.db import transaction
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from assetitem.models import Status
 from assetitem.serializers import AssetItemSerializer
 from .models import Asset
 from .serializers import AssetSerializer
+from users.views import IsSuperAdmin
 
 
 class AssetViewSet(viewsets.ModelViewSet):
     queryset = Asset.objects.all()
     serializer_class = AssetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Filter assets based on user role:
+        - Super admins see all assets
+        - Branch admins only see assets in their assigned branch/location
+        """
+        user = self.request.user
+        queryset = Asset.objects.all()
+
+        # If user is branch admin, filter by their branch location
+        if user.is_branch_admin and user.branch:
+            queryset = queryset.filter(location=user.branch)
+
+        return queryset
+
+    def get_permissions(self):
+        """
+        Super admins can perform all operations
+        Branch admins can only read and create assets in their branch
+        """
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ['create', 'receive_asset']:
+            permission_classes = [permissions.IsAuthenticated]
+        else:  # update, partial_update, destroy
+            permission_classes = [IsSuperAdmin]
+        return [permission() for permission in permission_classes]
 
     @action(detail=False, methods=['post'], url_path='receive')
     @transaction.atomic
