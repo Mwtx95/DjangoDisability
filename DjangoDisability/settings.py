@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'category',
     'location',
     'users',  # Add users app
+    'transfer',  # Add transfer app
 ]
 
 # Custom user model

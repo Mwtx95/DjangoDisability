@@ -25,4 +25,5 @@ urlpatterns = [
     path('api/assetitems/', include('assetitem.urls', namespace='assetitems')),
     path('api/vendors/',include('vendor.urls',namespace='vendors')),
     path('api/users/', include('users.urls')),
+    path('api/transfers/', include('transfer.urls', namespace='transfers')),
 ]
